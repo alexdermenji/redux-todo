@@ -1,35 +1,46 @@
 import { Paper, Divider, Button, List, Tabs, Tab } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { useReducer } from 'react';
 import { AddField } from './components/AddField';
 import { Item } from './components/Item';
 
-const initialState = [
-  {
-    id: 0,
-    text: 'First task',
-    completed: true,
-  },
-];
+const initialState = [];
 
 const reducer = (state, action) => {
   if (action.type === 'ADD_TASK') {
-    return [...state, action.payload];
+    return [
+      ...state,
+      {
+        id: state.length ? state[state.length - 1].id + 1 : 1,
+        text: action.payload.text,
+        completed: action.payload.completed,
+      },
+    ];
   }
 
+  if (action.type === 'DELETE_TASK') {
+    const newArr = state.filter((task) => {
+      return task.id !== action.payload;
+    });
+    return newArr;
+  }
   return state;
 };
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [inputText, setInputText] = useState('');
-  const [check, setCheck] = useState(false);
-  const addTask = () => {
+
+  const addTask = (inputText, check) => {
     dispatch({
       type: 'ADD_TASK',
-      payload: { text: inputText, id: state.length, completed: check },
+      payload: { text: inputText, completed: check },
     });
-    setInputText('');
-    setCheck(false);
+  };
+
+  const deleteTask = (id) => {
+    dispatch({
+      type: 'DELETE_TASK',
+      payload: id,
+    });
   };
 
   return (
@@ -38,13 +49,7 @@ function App() {
         <Paper className='header' elevation={0}>
           <h4>Список задач</h4>
         </Paper>
-        <AddField
-          setCheck={setCheck}
-          check={check}
-          addTask={addTask}
-          input={inputText}
-          setInputText={setInputText}
-        />
+        <AddField onAdd={addTask} />
         <Divider />
         <Tabs value={0}>
           <Tab label='Все' />
@@ -54,7 +59,13 @@ function App() {
         <Divider />
         <List>
           {state.map((obj) => (
-            <Item text={obj.text} key={obj.id} completed={obj.completed} />
+            <Item
+              deleteTask={deleteTask}
+              text={obj.text}
+              key={obj.id}
+              id={obj.id}
+              completed={obj.completed}
+            />
           ))}
         </List>
         <Divider />
