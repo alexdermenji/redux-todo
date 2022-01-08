@@ -30,7 +30,7 @@ export const Item = ({ text, completed, id, deleteTask }) => {
         <Typography className='item-text'>{text}</Typography>
         {confirmDelete ? (
           <div>
-            <span>Are you sure? </span>
+            <span>Are you sure you want delete task? </span>
             <button onClick={onDeleteClick}>Yes</button>
             <button onClick={onCancelDelete}>no</button>
           </div>
