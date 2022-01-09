@@ -32,14 +32,17 @@ const reducer = (state, action) => {
     });
   }
   if (action.type === 'TICK_TASKS') {
-    return state.map((task) => {
-      return { ...task, completed: true };
-    });
+    if (!action.payload) {
+      return state.map((task) => {
+        return { ...task, completed: true };
+      });
+    } else
+      return state.map((task) => {
+        return { ...task, completed: false };
+      });
   }
   if (action.type === 'CLEAR_TASKS') {
-    return state.map((task) => {
-      return { ...task, completed: false };
-    });
+    return [];
   }
   return state;
 };
@@ -47,6 +50,7 @@ const reducer = (state, action) => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [activeTab, setActiveTab] = useState(0);
+  const [allCompleted, setAllCompleted] = useState(false);
 
   const addTask = (inputText, check) => {
     dispatch({
@@ -70,10 +74,12 @@ function App() {
   };
 
   const tickAllTasks = () => {
-    dispatch({ type: 'TICK_TASKS' });
+    dispatch({ type: 'TICK_TASKS', payload: allCompleted });
+    setAllCompleted(!allCompleted);
   };
   const clearAllTasks = () => {
     dispatch({ type: 'CLEAR_TASKS' });
+    setAllCompleted(false);
   };
 
   const showActiveTasks = () => {
@@ -128,7 +134,9 @@ function App() {
         </List>
         <Divider />
         <div className='check-buttons'>
-          <Button onClick={tickAllTasks}>Отметить всё</Button>
+          <Button onClick={tickAllTasks}>
+            {allCompleted ? 'Снять отметки' : 'Отметить всё'}
+          </Button>
           <Button onClick={clearAllTasks}>Очистить</Button>
         </div>
       </Paper>
