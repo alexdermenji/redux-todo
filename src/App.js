@@ -134,10 +134,12 @@ function App() {
         </List>
         <Divider />
         <div className='check-buttons'>
-          <Button onClick={tickAllTasks}>
+          <Button disabled={!state.length} onClick={tickAllTasks}>
             {allCompleted ? 'Снять отметки' : 'Отметить всё'}
           </Button>
-          <Button onClick={clearAllTasks}>Очистить</Button>
+          <Button disabled={!state.length} onClick={clearAllTasks}>
+            Очистить
+          </Button>
         </div>
       </Paper>
     </div>
